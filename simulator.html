@@ -1,111 +1,269 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiddyfiddy — Prime Routing Simulator</title>
 <style>
-.layer-row { display:flex; align-items:center; gap:10px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:10px 14px; }
-.prime-dot { width:30px; height:30px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; font-family:var(--font-mono); flex-shrink:0; }
-.tk { width:13px; height:13px; border-radius:2px; display:inline-block; cursor:pointer; transition:transform 0.1s; }
-.tk:hover { transform:scale(1.6); z-index:10; position:relative; }
-.stat-row { display:flex; align-items:center; gap:10px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:10px 14px; }
-select, input[type=text] { font-size:13px; padding:4px 8px; border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-md); background:var(--color-background-primary); color:var(--color-text-primary); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --f-bg: #111111;
+    --f-surface: #1c1c1c;
+    --f-border: #2e2e2e;
+    --f-text: #f0f0f0;
+    --f-muted: #888;
+    --f-lime: #c8ff00;
+  }
+  body {
+    background: #0a0a0a;
+    color: var(--f-text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  #wrap { width: 100%; max-width: 860px; }
+
+  /* Header */
+  .site-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .site-logo {
+    font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+    color: var(--f-lime);
+  }
+  .site-tag {
+    font-size: 11px; color: var(--f-muted); border: 0.5px solid #333;
+    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+
+  /* Sim container */
+  #fsim {
+    background: var(--f-bg);
+    border: 0.5px solid var(--f-border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  .sim-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .sim-sub { font-size: 13px; color: var(--f-muted); margin-bottom: 28px; line-height: 1.6; }
+
+  /* Controls */
+  .f-label {
+    font-size: 11px; color: var(--f-muted);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px;
+  }
+  input[type=range] { accent-color: var(--f-lime); width: 100%; cursor: pointer; }
+  input[type=number], input[type=text], select {
+    background: var(--f-surface); color: var(--f-text);
+    border: 0.5px solid var(--f-border); border-radius: 6px;
+    padding: 6px 10px; font-size: 13px; outline: none;
+    font-family: inherit;
+  }
+  input[type=number]:focus, input[type=text]:focus, select:focus {
+    border-color: #555;
+  }
+  input[type=text] { width: 120px; }
+  select { cursor: pointer; }
+
+  /* Buttons */
+  button {
+    background: transparent; color: var(--f-muted);
+    border: 0.5px solid var(--f-border); border-radius: 6px;
+    padding: 5px 12px; font-size: 12px; cursor: pointer;
+    font-family: inherit; transition: color 0.15s, border-color 0.15s;
+  }
+  button:hover { color: var(--f-text); border-color: #555; }
+  button#addBtn {
+    background: var(--f-lime); color: #111; border: none;
+    font-weight: 600; padding: 7px 16px; font-size: 13px; border-radius: 7px;
+  }
+  button#addBtn:hover { background: #d4ff1a; }
+  button#addBtn:disabled { background: #2a2a2a; color: #444; cursor: not-allowed; }
+
+  /* Rows */
+  .f-row {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--f-surface); border: 0.5px solid var(--f-border);
+    border-radius: 8px; padding: 9px 14px; margin-bottom: 6px;
+  }
+  .f-badge {
+    width: 30px; height: 30px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; font-family: monospace; flex-shrink: 0;
+  }
+  .f-name { font-size: 13px; font-weight: 500; }
+  .f-sub-text { font-size: 11px; color: var(--f-muted); }
+  .f-count { font-size: 12px; font-family: monospace; color: var(--f-muted); margin-left: auto; flex-shrink: 0; }
+
+  /* Stat cards */
+  .f-stat {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--f-surface); border: 0.5px solid var(--f-border);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 6px;
+  }
+  .f-bar-wrap { flex: 1; height: 4px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+  .f-bar { height: 100%; border-radius: 2px; transition: width 0.35s; }
+
+  /* Ticket grid */
+  .tk {
+    width: 13px; height: 13px; border-radius: 2px;
+    display: inline-block; cursor: pointer;
+    transition: transform 0.1s; flex-shrink: 0;
+  }
+  .tk:hover { transform: scale(1.8); z-index: 10; position: relative; }
+
+  /* Summary box */
+  .f-summary {
+    background: var(--f-surface); border: 0.5px solid var(--f-border);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .f-summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .f-summary-row + .f-summary-row { margin-top: 8px; }
+
+  /* Detail */
+  #ticketDetail {
+    background: var(--f-surface); border: 0.5px solid #444;
+    border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; margin-top: 10px; display: none;
+  }
+
+  /* Legend */
+  .legend-wrap {
+    display: flex; flex-wrap: wrap; gap: 14px;
+    margin-top: 10px; font-size: 12px; color: var(--f-muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+  /* Section divider */
+  .f-section { margin: 28px 0 10px; }
+  .f-section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
 </style>
+</head>
+<body>
+<div id="wrap">
 
-<div style="padding:1rem 0 2rem;">
-
-<div style="margin-bottom:20px;">
-  <div style="font-size:18px; font-weight:500; margin-bottom:4px;">Prime routing simulator</div>
-  <div style="font-size:13px; color:var(--color-text-secondary);">Each ticket's sequence number is evaluated against every layer's prime via modulo. Collisions resolve by rotating back-off: the last collision winner yields to the next eligible party.</div>
-</div>
-
-<div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end; margin-bottom:24px;">
-  <div style="flex:2; min-width:180px;">
-    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px;">Tickets in raffle</div>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <input type="range" id="tcSlider" min="20" max="300" step="1" value="110" style="flex:1;">
-      <span id="tcVal" style="font-size:15px; font-weight:500; min-width:36px; text-align:right; font-family:var(--font-mono);">110</span>
-    </div>
-  </div>
-  <div style="min-width:110px;">
-    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px;">Ticket price ($)</div>
-    <input type="number" id="priceInput" min="1" max="50" value="5" step="1" style="width:80px;">
-  </div>
-</div>
-
-<div style="margin-bottom:20px;">
-  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-    <div style="font-size:12px; color:var(--color-text-secondary);">Routing layers</div>
-    <button id="addBtn" onclick="addLayer()" style="font-size:12px; padding:4px 12px;">+ add layer</button>
+  <div class="site-header">
+    <div class="site-logo">fiddyfiddy</div>
+    <div class="site-tag">Digital 50/50 Raffle Platform</div>
   </div>
 
-  <div style="display:flex; flex-direction:column; gap:6px;">
-    <div class="layer-row">
-      <div class="prime-dot" style="background:#D3D1C7; color:#444441;">B</div>
-      <div style="flex:1;">
-        <div style="font-size:13px; font-weight:500;">Beneficiary</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">Default — receives all unmatched tickets</div>
+  <div id="fsim">
+    <div class="sim-title">Prime routing simulator</div>
+    <div class="sim-sub">Each ticket's sequence number is evaluated against every layer's prime via modulo. Collisions resolve by rotating back-off: the last collision winner yields to the next eligible party.</div>
+
+    <!-- Controls -->
+    <div style="display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; margin-bottom:28px;">
+      <div style="flex:2; min-width:200px;">
+        <div class="f-label">Tickets in raffle</div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <input type="range" id="tcSlider" min="20" max="300" step="1" value="110">
+          <span id="tcVal" style="font-size:16px; font-weight:600; min-width:38px; font-family:monospace; color:var(--f-lime);">110</span>
+        </div>
       </div>
-      <div id="beneficiary-count" style="font-size:12px; font-family:var(--font-mono); color:var(--color-text-secondary);"></div>
+      <div>
+        <div class="f-label">Ticket price ($)</div>
+        <input type="number" id="priceInput" min="1" max="50" value="5" step="1" style="width:90px;">
+      </div>
     </div>
+
+    <!-- Layers header -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+      <div class="f-label" style="margin-bottom:0;">Routing layers</div>
+      <button id="addBtn" onclick="addLayer()">+ add layer</button>
+    </div>
+
+    <!-- Fixed: Raffle Winner -->
+    <div class="f-row">
+      <div class="f-badge" style="background:#1e2a00; color:#c8ff00;">W</div>
+      <div>
+        <div class="f-name">Raffle winner</div>
+        <div class="f-sub-text">50% of total revenue — paid out after draw</div>
+      </div>
+      <div id="winner-rev" class="f-count" style="color:#c8ff00;"></div>
+    </div>
+
+    <!-- Fixed: Beneficiary -->
+    <div class="f-row">
+      <div class="f-badge" style="background:#222; color:#666;">B</div>
+      <div>
+        <div class="f-name">Beneficiary</div>
+        <div class="f-sub-text">Default — receives all unmatched tickets</div>
+      </div>
+      <div id="beneficiary-count" class="f-count"></div>
+    </div>
+
+    <!-- Dynamic layers -->
     <div id="layerList"></div>
-  </div>
-</div>
 
-<div style="display:flex; gap:16px; flex-wrap:wrap; align-items:start; margin-bottom:20px;">
-  <div style="flex:1; min-width:240px;">
-    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Ticket routing map <span id="collNote" style="color:var(--color-text-tertiary);"></span></div>
-    <div id="ticketGrid" style="display:flex; flex-wrap:wrap; gap:3px; padding:12px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); min-height:40px;"></div>
-    <div id="legend" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:11px; color:var(--color-text-secondary);"></div>
-  </div>
-
-  <div style="width:260px; flex-shrink:0;">
-    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Allocation by recipient</div>
-    <div id="statCards" style="display:flex; flex-direction:column; gap:6px;"></div>
-    <div style="margin-top:8px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:12px 14px;">
-      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-        <span style="font-size:12px; color:var(--color-text-secondary);">Total revenue</span>
-        <span id="totalRev" style="font-size:13px; font-weight:500; font-family:var(--font-mono);"></span>
+    <!-- Allocation -->
+    <div class="f-section">
+      <div class="f-section-head">
+        <div class="f-label" style="margin-bottom:0;">Allocation by recipient</div>
+        <div id="collNote" style="font-size:11px; color:var(--f-muted);"></div>
       </div>
-      <div style="display:flex; justify-content:space-between;">
-        <span style="font-size:12px; color:var(--color-text-secondary);">Winner jackpot (50%)</span>
-        <span id="jackpot" style="font-size:13px; font-weight:500; font-family:var(--font-mono);"></span>
+      <div id="statCards"></div>
+      <div class="f-summary" style="margin-top:6px;">
+        <div class="f-summary-row">
+          <span style="font-size:12px; color:var(--f-muted);">Total revenue</span>
+          <span id="totalRev" style="font-size:14px; font-weight:600; font-family:monospace;"></span>
+        </div>
+        <div class="f-summary-row">
+          <span style="font-size:12px; color:var(--f-muted);">Winner jackpot (50%)</span>
+          <span id="jackpot" style="font-size:14px; font-weight:600; font-family:monospace; color:#c8ff00;"></span>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div id="ticketDetail" style="display:none; background:var(--color-background-secondary); border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-md); padding:10px 14px; font-size:13px; margin-top:4px;"></div>
+    <!-- Ticket grid -->
+    <div class="f-section">
+      <div class="f-label">Ticket routing map</div>
+      <div id="ticketGrid" style="display:flex; flex-wrap:wrap; gap:3px; padding:16px; background:var(--f-surface); border:0.5px solid var(--f-border); border-radius:8px; min-height:48px;"></div>
+      <div class="legend-wrap" id="legend"></div>
+      <div id="ticketDetail"></div>
+    </div>
+
+  </div>
+
+  <div style="text-align:center; margin-top:24px; font-size:11px; color:#444;">
+    Patent-pending &mdash; Prime Number-Based Transaction Routing &mdash; fiddyfiddy.org
+  </div>
 </div>
 
 <script>
 const LAYER_COLORS = [
-  { mid:'#BA7517', bg:'#FAEEDA', text:'#412402', label:'amber' },
-  { mid:'#378ADD', bg:'#E6F1FB', text:'#042C53', label:'blue' },
-  { mid:'#D85A30', bg:'#FAECE7', text:'#4A1B0C', label:'coral' },
-  { mid:'#7F77DD', bg:'#EEEDFE', text:'#26215C', label:'purple' },
-  { mid:'#639922', bg:'#EAF3DE', text:'#173404', label:'green' },
-  { mid:'#1D9E75', bg:'#E1F5EE', text:'#04342C', label:'teal' },
+  { mid:'#c8ff00', bg:'#1e2a00', text:'#c8ff00', name:'lime' },
+  { mid:'#fb923c', bg:'#2a1400', text:'#fb923c', name:'orange' },
+  { mid:'#a78bfa', bg:'#1a1030', text:'#a78bfa', name:'purple' },
+  { mid:'#f472b6', bg:'#2a0a1a', text:'#f472b6', name:'pink' },
+  { mid:'#38bdf8', bg:'#0a1e2a', text:'#38bdf8', name:'blue' },
+  { mid:'#34d399', bg:'#001a10', text:'#34d399', name:'green' },
 ];
-const BENEF_MID = '#888780';
+
+const BENEF_MID = '#555';
 const ALL_PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
 
-let layers = [ { id:'l0', name:'Platform', prime:11, colorIdx:0 } ];
+let layers = [{ id:'l0', name:'Platform', prime:11, colorIdx:0 }];
 let nextId = 1, nextColorIdx = 1;
 
 function usedPrimes() { return new Set(layers.map(l => l.prime)); }
+function getAvailPrimes() { const u = usedPrimes(); return ALL_PRIMES.filter(p => !u.has(p)); }
 
-function getAvailPrimes() {
-  const used = usedPrimes();
-  return ALL_PRIMES.filter(p => !used.has(p));
-}
-
-function computeRouting(numTickets, layerList) {
-  const results = [];
-  const received = { beneficiary: 0 };
+function computeRouting(n, layerList) {
+  const results = [], received = { beneficiary: 0 };
   const backedOff = {};
   layerList.forEach(l => { received[l.id] = 0; backedOff[l.id] = false; });
-
-  for (let n = 1; n <= numTickets; n++) {
-    const matching = layerList.filter(l => n % l.prime === 0);
+  for (let i = 1; i <= n; i++) {
+    const matching = layerList.filter(l => i % l.prime === 0);
     let recipientId, isCollision = false, collisionIds = [];
-
     if (matching.length === 0) {
       recipientId = 'beneficiary';
     } else if (matching.length === 1) {
@@ -116,105 +274,112 @@ function computeRouting(numTickets, layerList) {
       const notBacked = matching.filter(l => !backedOff[l.id]);
       let candidates = notBacked.length > 0 ? notBacked : matching;
       if (notBacked.length === 0) matching.forEach(l => { backedOff[l.id] = false; });
-      candidates.sort((a,b) => a.prime - b.prime);
+      candidates.sort((a, b) => a.prime - b.prime);
       const winner = candidates[0];
       matching.forEach(l => { backedOff[l.id] = (l.id === winner.id); });
       recipientId = winner.id;
     }
-
     received[recipientId]++;
-    results.push({ n, recipientId, isCollision, collisionIds });
+    results.push({ n: i, recipientId, isCollision, collisionIds });
   }
   return { results, received };
 }
 
+function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+
 function render() {
   const numTickets = parseInt(document.getElementById('tcSlider').value);
   const ticketPrice = parseFloat(document.getElementById('priceInput').value) || 5;
+  const total = numTickets * ticketPrice;
+  const jackpotAmt = total * 0.5;
 
   const { results, received } = computeRouting(numTickets, layers);
-
   const collisions = results.filter(r => r.isCollision).length;
-  document.getElementById('collNote').textContent = `— ${collisions} collision${collisions !== 1 ? 's' : ''}`;
-  document.getElementById('totalRev').textContent = '$' + (numTickets * ticketPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  document.getElementById('jackpot').textContent = '$' + (numTickets * ticketPrice * 0.5).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
 
+  document.getElementById('collNote').textContent = collisions + ' collision' + (collisions !== 1 ? 's' : '');
+  document.getElementById('totalRev').textContent = fmt(total);
+  document.getElementById('jackpot').textContent = fmt(jackpotAmt);
+  document.getElementById('winner-rev').textContent = fmt(jackpotAmt);
   document.getElementById('beneficiary-count').textContent = received['beneficiary'] + ' tickets';
 
   const colorMap = {};
   layers.forEach(l => { colorMap[l.id] = LAYER_COLORS[l.colorIdx]; });
 
+  // Ticket grid
   const grid = document.getElementById('ticketGrid');
   grid.innerHTML = '';
   results.forEach(r => {
     const sq = document.createElement('span');
     sq.className = 'tk';
-    const c = r.recipientId === 'beneficiary' ? BENEF_MID : colorMap[r.recipientId]?.mid || BENEF_MID;
+    const c = r.recipientId === 'beneficiary' ? BENEF_MID : (colorMap[r.recipientId]?.mid || BENEF_MID);
     sq.style.background = c;
-    if (r.isCollision) { sq.style.outline = '1.5px solid var(--color-text-primary)'; sq.style.outlineOffset = '-1.5px'; }
-    sq.title = `Ticket #${r.n}${r.isCollision ? ' ⚡ collision' : ''}`;
+    if (r.isCollision) { sq.style.outline = '1.5px solid #fff'; sq.style.outlineOffset = '-1.5px'; }
+    sq.title = 'Ticket #' + r.n + (r.isCollision ? ' — collision' : '');
     sq.addEventListener('click', () => {
       const layer = r.recipientId === 'beneficiary' ? null : layers.find(l => l.id === r.recipientId);
       const name = layer ? layer.name : 'Beneficiary';
       const detail = document.getElementById('ticketDetail');
       detail.style.display = 'block';
-      let txt = `<strong style="font-weight:500;">Ticket #${r.n}</strong> → <span style="color:${c}; font-weight:500;">${name}</span>`;
+      let txt = '<span style="color:var(--f-muted);">Ticket #' + r.n + '</span>'
+        + ' <span style="color:#444; margin:0 6px;">&#8594;</span>'
+        + ' <span style="color:' + c + '; font-weight:500;">' + name + '</span>';
       if (r.isCollision) {
-        const parties = r.collisionIds.map(id => layers.find(l=>l.id===id)?.name || id).join(', ');
-        txt += ` <span style="color:var(--color-text-secondary); font-size:12px;">— collision between ${parties}; back-off resolver applied</span>`;
+        const parties = r.collisionIds.map(id => layers.find(l => l.id === id)?.name || id).join(', ');
+        txt += ' <span style="color:var(--f-muted); font-size:11px;">&nbsp;&mdash; collision between ' + parties + '; back-off resolver applied</span>';
       }
       detail.innerHTML = txt;
     });
     grid.appendChild(sq);
   });
 
+  // Legend
   const legend = document.getElementById('legend');
   legend.innerHTML = '';
-  const befEl = document.createElement('span');
-  befEl.style.cssText = 'display:flex; align-items:center; gap:4px;';
-  befEl.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:${BENEF_MID}; display:inline-block;"></span>Beneficiary`;
-  legend.appendChild(befEl);
+  const bef = document.createElement('span');
+  bef.className = 'legend-item';
+  bef.innerHTML = '<span class="legend-swatch" style="background:' + BENEF_MID + ';"></span>Beneficiary';
+  legend.appendChild(bef);
   layers.forEach(l => {
     const c = LAYER_COLORS[l.colorIdx];
     const el = document.createElement('span');
-    el.style.cssText = 'display:flex; align-items:center; gap:4px;';
-    el.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:${c.mid}; display:inline-block;"></span>${l.name} (p${l.prime})`;
+    el.className = 'legend-item';
+    el.innerHTML = '<span class="legend-swatch" style="background:' + c.mid + ';"></span>' + l.name + ' (p' + l.prime + ')';
     legend.appendChild(el);
   });
-  const collEl = document.createElement('span');
-  collEl.style.cssText = 'display:flex; align-items:center; gap:4px;';
-  collEl.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:var(--color-background-secondary); outline:1.5px solid var(--color-text-primary); display:inline-block;"></span>collision`;
-  legend.appendChild(collEl);
+  const cEl = document.createElement('span');
+  cEl.className = 'legend-item';
+  cEl.innerHTML = '<span class="legend-swatch" style="background:#333; outline:1.5px solid #fff;"></span>collision';
+  legend.appendChild(cEl);
 
+  // Stat cards
   const statCards = document.getElementById('statCards');
   statCards.innerHTML = '';
-
   const allParties = [
     { id: 'beneficiary', name: 'Beneficiary', prime: null, color: null },
     ...layers.map(l => ({ id: l.id, name: l.name, prime: l.prime, color: LAYER_COLORS[l.colorIdx] }))
   ];
-
   allParties.forEach(p => {
     const tickets = received[p.id] || 0;
     const actual = (tickets / numTickets * 100).toFixed(1);
     const theoretical = p.prime ? (100 / p.prime).toFixed(1) : null;
     const revenue = (tickets * ticketPrice).toFixed(2);
     const mid = p.color ? p.color.mid : BENEF_MID;
-    const bg = p.color ? p.color.bg : '#F1EFE8';
-    const textC = p.color ? p.color.text : '#444441';
-
+    const bg = p.color ? p.color.bg : '#1a1a1a';
+    const barPct = (tickets / numTickets * 100).toFixed(1);
     const card = document.createElement('div');
-    card.className = 'stat-row';
-    card.innerHTML = `
-      <div class="prime-dot" style="background:${bg}; color:${textC};">${p.prime || 'B'}</div>
-      <div style="flex:1; min-width:0;">
-        <div style="font-size:12px; font-weight:500;">${p.name}</div>
-        ${p.prime ? `<div style="font-size:11px; color:var(--color-text-secondary);">theoretical: ${theoretical}%</div>` : '<div style="font-size:11px; color:var(--color-text-secondary);">all unmatched</div>'}
-      </div>
-      <div style="text-align:right; flex-shrink:0;">
-        <div style="font-size:13px; font-weight:500; font-family:var(--font-mono); color:${mid};">${tickets}</div>
-        <div style="font-size:11px; color:var(--color-text-secondary);">${actual}% · $${revenue}</div>
-      </div>`;
+    card.className = 'f-stat';
+    card.innerHTML =
+      '<div class="f-badge" style="background:' + bg + '; color:' + mid + ';">' + (p.prime || 'B') + '</div>' +
+      '<div style="flex:1; min-width:0;">' +
+        '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">' +
+          '<span style="font-size:13px; font-weight:500;">' + p.name + '</span>' +
+          '<span style="font-size:12px; font-family:monospace; color:' + mid + ';">' + tickets + ' tickets &nbsp; $' + revenue + '</span>' +
+        '</div>' +
+        '<div style="display:flex; align-items:center; gap:10px;">' +
+          '<div class="f-bar-wrap"><div class="f-bar" style="width:' + barPct + '%; background:' + mid + ';"></div></div>' +
+          '<span style="font-size:11px; color:var(--f-muted); white-space:nowrap;">' + actual + '%' + (theoretical ? ' vs ' + theoretical + '% theory' : '') + '</span>' +
+        '</div>' +
+      '</div>';
     statCards.appendChild(card);
   });
 
@@ -228,19 +393,18 @@ function renderLayerList() {
   layers.forEach(l => {
     const c = LAYER_COLORS[l.colorIdx];
     const row = document.createElement('div');
-    row.className = 'layer-row';
-    const primeOpts = [l.prime, ...avail].sort((a,b)=>a-b).map(p =>
-      `<option value="${p}" ${p === l.prime ? 'selected' : ''}>p${p} (~${(100/p).toFixed(1)}%)</option>`
+    row.className = 'f-row';
+    const primeOpts = [l.prime, ...avail].sort((a, b) => a - b).map(p =>
+      '<option value="' + p + '"' + (p === l.prime ? ' selected' : '') + '>p' + p + ' (~' + (100 / p).toFixed(1) + '%)</option>'
     ).join('');
-    row.innerHTML = `
-      <div class="prime-dot" style="background:${c.bg}; color:${c.text};">${l.prime}</div>
-      <input type="text" value="${l.name}" style="width:100px;" onchange="updateName('${l.id}', this.value)">
-      <select onchange="updatePrime('${l.id}', parseInt(this.value))">${primeOpts}</select>
-      <div style="flex:1;"></div>
-      <button onclick="removeLayer('${l.id}')" style="font-size:12px; padding:2px 8px; color:var(--color-text-secondary);">remove</button>`;
+    row.innerHTML =
+      '<div class="f-badge" style="background:' + c.bg + '; color:' + c.mid + ';">' + l.prime + '</div>' +
+      '<input type="text" value="' + l.name + '" onchange="updateName(\'' + l.id + '\', this.value)">' +
+      '<select onchange="updatePrime(\'' + l.id + '\', parseInt(this.value))">' + primeOpts + '</select>' +
+      '<div style="flex:1;"></div>' +
+      '<button onclick="removeLayer(\'' + l.id + '\')">remove</button>';
     list.appendChild(row);
   });
-
   const addBtn = document.getElementById('addBtn');
   addBtn.disabled = layers.length >= 6 || getAvailPrimes().length === 0;
 }
@@ -248,27 +412,20 @@ function renderLayerList() {
 function addLayer() {
   const avail = getAvailPrimes();
   if (avail.length === 0 || layers.length >= 6) return;
-  layers.push({ id:'l'+nextId++, name:'Layer '+layers.length, prime: avail[0], colorIdx: nextColorIdx % LAYER_COLORS.length });
+  layers.push({
+    id: 'l' + nextId++,
+    name: 'Layer ' + layers.length,
+    prime: avail[0],
+    colorIdx: nextColorIdx % LAYER_COLORS.length
+  });
   nextColorIdx++;
   render();
 }
+function removeLayer(id) { layers = layers.filter(l => l.id !== id); render(); }
+function updateName(id, val) { const l = layers.find(l => l.id === id); if (l) { l.name = val; render(); } }
+function updatePrime(id, val) { const l = layers.find(l => l.id === id); if (l) { l.prime = val; render(); } }
 
-function removeLayer(id) {
-  layers = layers.filter(l => l.id !== id);
-  render();
-}
-
-function updateName(id, val) {
-  const l = layers.find(l => l.id === id);
-  if (l) { l.name = val; render(); }
-}
-
-function updatePrime(id, val) {
-  const l = layers.find(l => l.id === id);
-  if (l) { l.prime = val; render(); }
-}
-
-document.getElementById('tcSlider').addEventListener('input', function() {
+document.getElementById('tcSlider').addEventListener('input', function () {
   document.getElementById('tcVal').textContent = this.value;
   document.getElementById('ticketDetail').style.display = 'none';
   render();
@@ -277,3 +434,5 @@ document.getElementById('priceInput').addEventListener('input', render);
 
 render();
 </script>
+</body>
+</html>
