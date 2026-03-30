@@ -1,0 +1,279 @@
+
+<style>
+.layer-row { display:flex; align-items:center; gap:10px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:10px 14px; }
+.prime-dot { width:30px; height:30px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:500; font-family:var(--font-mono); flex-shrink:0; }
+.tk { width:13px; height:13px; border-radius:2px; display:inline-block; cursor:pointer; transition:transform 0.1s; }
+.tk:hover { transform:scale(1.6); z-index:10; position:relative; }
+.stat-row { display:flex; align-items:center; gap:10px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:10px 14px; }
+select, input[type=text] { font-size:13px; padding:4px 8px; border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-md); background:var(--color-background-primary); color:var(--color-text-primary); }
+</style>
+
+<div style="padding:1rem 0 2rem;">
+
+<div style="margin-bottom:20px;">
+  <div style="font-size:18px; font-weight:500; margin-bottom:4px;">Prime routing simulator</div>
+  <div style="font-size:13px; color:var(--color-text-secondary);">Each ticket's sequence number is evaluated against every layer's prime via modulo. Collisions resolve by rotating back-off: the last collision winner yields to the next eligible party.</div>
+</div>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end; margin-bottom:24px;">
+  <div style="flex:2; min-width:180px;">
+    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px;">Tickets in raffle</div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <input type="range" id="tcSlider" min="20" max="300" step="1" value="110" style="flex:1;">
+      <span id="tcVal" style="font-size:15px; font-weight:500; min-width:36px; text-align:right; font-family:var(--font-mono);">110</span>
+    </div>
+  </div>
+  <div style="min-width:110px;">
+    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:6px;">Ticket price ($)</div>
+    <input type="number" id="priceInput" min="1" max="50" value="5" step="1" style="width:80px;">
+  </div>
+</div>
+
+<div style="margin-bottom:20px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+    <div style="font-size:12px; color:var(--color-text-secondary);">Routing layers</div>
+    <button id="addBtn" onclick="addLayer()" style="font-size:12px; padding:4px 12px;">+ add layer</button>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:6px;">
+    <div class="layer-row">
+      <div class="prime-dot" style="background:#D3D1C7; color:#444441;">B</div>
+      <div style="flex:1;">
+        <div style="font-size:13px; font-weight:500;">Beneficiary</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">Default — receives all unmatched tickets</div>
+      </div>
+      <div id="beneficiary-count" style="font-size:12px; font-family:var(--font-mono); color:var(--color-text-secondary);"></div>
+    </div>
+    <div id="layerList"></div>
+  </div>
+</div>
+
+<div style="display:flex; gap:16px; flex-wrap:wrap; align-items:start; margin-bottom:20px;">
+  <div style="flex:1; min-width:240px;">
+    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Ticket routing map <span id="collNote" style="color:var(--color-text-tertiary);"></span></div>
+    <div id="ticketGrid" style="display:flex; flex-wrap:wrap; gap:3px; padding:12px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); min-height:40px;"></div>
+    <div id="legend" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; font-size:11px; color:var(--color-text-secondary);"></div>
+  </div>
+
+  <div style="width:260px; flex-shrink:0;">
+    <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:8px;">Allocation by recipient</div>
+    <div id="statCards" style="display:flex; flex-direction:column; gap:6px;"></div>
+    <div style="margin-top:8px; background:var(--color-background-secondary); border:0.5px solid var(--color-border-tertiary); border-radius:var(--border-radius-md); padding:12px 14px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+        <span style="font-size:12px; color:var(--color-text-secondary);">Total revenue</span>
+        <span id="totalRev" style="font-size:13px; font-weight:500; font-family:var(--font-mono);"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="font-size:12px; color:var(--color-text-secondary);">Winner jackpot (50%)</span>
+        <span id="jackpot" style="font-size:13px; font-weight:500; font-family:var(--font-mono);"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="ticketDetail" style="display:none; background:var(--color-background-secondary); border:0.5px solid var(--color-border-secondary); border-radius:var(--border-radius-md); padding:10px 14px; font-size:13px; margin-top:4px;"></div>
+</div>
+
+<script>
+const LAYER_COLORS = [
+  { mid:'#BA7517', bg:'#FAEEDA', text:'#412402', label:'amber' },
+  { mid:'#378ADD', bg:'#E6F1FB', text:'#042C53', label:'blue' },
+  { mid:'#D85A30', bg:'#FAECE7', text:'#4A1B0C', label:'coral' },
+  { mid:'#7F77DD', bg:'#EEEDFE', text:'#26215C', label:'purple' },
+  { mid:'#639922', bg:'#EAF3DE', text:'#173404', label:'green' },
+  { mid:'#1D9E75', bg:'#E1F5EE', text:'#04342C', label:'teal' },
+];
+const BENEF_MID = '#888780';
+const ALL_PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
+
+let layers = [ { id:'l0', name:'Platform', prime:11, colorIdx:0 } ];
+let nextId = 1, nextColorIdx = 1;
+
+function usedPrimes() { return new Set(layers.map(l => l.prime)); }
+
+function getAvailPrimes() {
+  const used = usedPrimes();
+  return ALL_PRIMES.filter(p => !used.has(p));
+}
+
+function computeRouting(numTickets, layerList) {
+  const results = [];
+  const received = { beneficiary: 0 };
+  const backedOff = {};
+  layerList.forEach(l => { received[l.id] = 0; backedOff[l.id] = false; });
+
+  for (let n = 1; n <= numTickets; n++) {
+    const matching = layerList.filter(l => n % l.prime === 0);
+    let recipientId, isCollision = false, collisionIds = [];
+
+    if (matching.length === 0) {
+      recipientId = 'beneficiary';
+    } else if (matching.length === 1) {
+      recipientId = matching[0].id;
+    } else {
+      isCollision = true;
+      collisionIds = matching.map(l => l.id);
+      const notBacked = matching.filter(l => !backedOff[l.id]);
+      let candidates = notBacked.length > 0 ? notBacked : matching;
+      if (notBacked.length === 0) matching.forEach(l => { backedOff[l.id] = false; });
+      candidates.sort((a,b) => a.prime - b.prime);
+      const winner = candidates[0];
+      matching.forEach(l => { backedOff[l.id] = (l.id === winner.id); });
+      recipientId = winner.id;
+    }
+
+    received[recipientId]++;
+    results.push({ n, recipientId, isCollision, collisionIds });
+  }
+  return { results, received };
+}
+
+function render() {
+  const numTickets = parseInt(document.getElementById('tcSlider').value);
+  const ticketPrice = parseFloat(document.getElementById('priceInput').value) || 5;
+
+  const { results, received } = computeRouting(numTickets, layers);
+
+  const collisions = results.filter(r => r.isCollision).length;
+  document.getElementById('collNote').textContent = `— ${collisions} collision${collisions !== 1 ? 's' : ''}`;
+  document.getElementById('totalRev').textContent = '$' + (numTickets * ticketPrice).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById('jackpot').textContent = '$' + (numTickets * ticketPrice * 0.5).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  document.getElementById('beneficiary-count').textContent = received['beneficiary'] + ' tickets';
+
+  const colorMap = {};
+  layers.forEach(l => { colorMap[l.id] = LAYER_COLORS[l.colorIdx]; });
+
+  const grid = document.getElementById('ticketGrid');
+  grid.innerHTML = '';
+  results.forEach(r => {
+    const sq = document.createElement('span');
+    sq.className = 'tk';
+    const c = r.recipientId === 'beneficiary' ? BENEF_MID : colorMap[r.recipientId]?.mid || BENEF_MID;
+    sq.style.background = c;
+    if (r.isCollision) { sq.style.outline = '1.5px solid var(--color-text-primary)'; sq.style.outlineOffset = '-1.5px'; }
+    sq.title = `Ticket #${r.n}${r.isCollision ? ' ⚡ collision' : ''}`;
+    sq.addEventListener('click', () => {
+      const layer = r.recipientId === 'beneficiary' ? null : layers.find(l => l.id === r.recipientId);
+      const name = layer ? layer.name : 'Beneficiary';
+      const detail = document.getElementById('ticketDetail');
+      detail.style.display = 'block';
+      let txt = `<strong style="font-weight:500;">Ticket #${r.n}</strong> → <span style="color:${c}; font-weight:500;">${name}</span>`;
+      if (r.isCollision) {
+        const parties = r.collisionIds.map(id => layers.find(l=>l.id===id)?.name || id).join(', ');
+        txt += ` <span style="color:var(--color-text-secondary); font-size:12px;">— collision between ${parties}; back-off resolver applied</span>`;
+      }
+      detail.innerHTML = txt;
+    });
+    grid.appendChild(sq);
+  });
+
+  const legend = document.getElementById('legend');
+  legend.innerHTML = '';
+  const befEl = document.createElement('span');
+  befEl.style.cssText = 'display:flex; align-items:center; gap:4px;';
+  befEl.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:${BENEF_MID}; display:inline-block;"></span>Beneficiary`;
+  legend.appendChild(befEl);
+  layers.forEach(l => {
+    const c = LAYER_COLORS[l.colorIdx];
+    const el = document.createElement('span');
+    el.style.cssText = 'display:flex; align-items:center; gap:4px;';
+    el.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:${c.mid}; display:inline-block;"></span>${l.name} (p${l.prime})`;
+    legend.appendChild(el);
+  });
+  const collEl = document.createElement('span');
+  collEl.style.cssText = 'display:flex; align-items:center; gap:4px;';
+  collEl.innerHTML = `<span style="width:10px; height:10px; border-radius:2px; background:var(--color-background-secondary); outline:1.5px solid var(--color-text-primary); display:inline-block;"></span>collision`;
+  legend.appendChild(collEl);
+
+  const statCards = document.getElementById('statCards');
+  statCards.innerHTML = '';
+
+  const allParties = [
+    { id: 'beneficiary', name: 'Beneficiary', prime: null, color: null },
+    ...layers.map(l => ({ id: l.id, name: l.name, prime: l.prime, color: LAYER_COLORS[l.colorIdx] }))
+  ];
+
+  allParties.forEach(p => {
+    const tickets = received[p.id] || 0;
+    const actual = (tickets / numTickets * 100).toFixed(1);
+    const theoretical = p.prime ? (100 / p.prime).toFixed(1) : null;
+    const revenue = (tickets * ticketPrice).toFixed(2);
+    const mid = p.color ? p.color.mid : BENEF_MID;
+    const bg = p.color ? p.color.bg : '#F1EFE8';
+    const textC = p.color ? p.color.text : '#444441';
+
+    const card = document.createElement('div');
+    card.className = 'stat-row';
+    card.innerHTML = `
+      <div class="prime-dot" style="background:${bg}; color:${textC};">${p.prime || 'B'}</div>
+      <div style="flex:1; min-width:0;">
+        <div style="font-size:12px; font-weight:500;">${p.name}</div>
+        ${p.prime ? `<div style="font-size:11px; color:var(--color-text-secondary);">theoretical: ${theoretical}%</div>` : '<div style="font-size:11px; color:var(--color-text-secondary);">all unmatched</div>'}
+      </div>
+      <div style="text-align:right; flex-shrink:0;">
+        <div style="font-size:13px; font-weight:500; font-family:var(--font-mono); color:${mid};">${tickets}</div>
+        <div style="font-size:11px; color:var(--color-text-secondary);">${actual}% · $${revenue}</div>
+      </div>`;
+    statCards.appendChild(card);
+  });
+
+  renderLayerList();
+}
+
+function renderLayerList() {
+  const avail = getAvailPrimes();
+  const list = document.getElementById('layerList');
+  list.innerHTML = '';
+  layers.forEach(l => {
+    const c = LAYER_COLORS[l.colorIdx];
+    const row = document.createElement('div');
+    row.className = 'layer-row';
+    const primeOpts = [l.prime, ...avail].sort((a,b)=>a-b).map(p =>
+      `<option value="${p}" ${p === l.prime ? 'selected' : ''}>p${p} (~${(100/p).toFixed(1)}%)</option>`
+    ).join('');
+    row.innerHTML = `
+      <div class="prime-dot" style="background:${c.bg}; color:${c.text};">${l.prime}</div>
+      <input type="text" value="${l.name}" style="width:100px;" onchange="updateName('${l.id}', this.value)">
+      <select onchange="updatePrime('${l.id}', parseInt(this.value))">${primeOpts}</select>
+      <div style="flex:1;"></div>
+      <button onclick="removeLayer('${l.id}')" style="font-size:12px; padding:2px 8px; color:var(--color-text-secondary);">remove</button>`;
+    list.appendChild(row);
+  });
+
+  const addBtn = document.getElementById('addBtn');
+  addBtn.disabled = layers.length >= 6 || getAvailPrimes().length === 0;
+}
+
+function addLayer() {
+  const avail = getAvailPrimes();
+  if (avail.length === 0 || layers.length >= 6) return;
+  layers.push({ id:'l'+nextId++, name:'Layer '+layers.length, prime: avail[0], colorIdx: nextColorIdx % LAYER_COLORS.length });
+  nextColorIdx++;
+  render();
+}
+
+function removeLayer(id) {
+  layers = layers.filter(l => l.id !== id);
+  render();
+}
+
+function updateName(id, val) {
+  const l = layers.find(l => l.id === id);
+  if (l) { l.name = val; render(); }
+}
+
+function updatePrime(id, val) {
+  const l = layers.find(l => l.id === id);
+  if (l) { l.prime = val; render(); }
+}
+
+document.getElementById('tcSlider').addEventListener('input', function() {
+  document.getElementById('tcVal').textContent = this.value;
+  document.getElementById('ticketDetail').style.display = 'none';
+  render();
+});
+document.getElementById('priceInput').addEventListener('input', render);
+
+render();
+</script>
