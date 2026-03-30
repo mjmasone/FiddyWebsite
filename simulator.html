@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fiddyfiddy — Prime Routing Simulator</title>
+<title>Fiddyfiddy &mdash; Prime Routing Simulator</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -25,54 +25,25 @@
     padding: 40px 20px;
   }
   #wrap { width: 100%; max-width: 860px; }
-
-  /* Header */
-  .site-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 32px;
-  }
-  .site-logo {
-    font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
-    color: var(--f-lime);
-  }
-  .site-tag {
-    font-size: 11px; color: var(--f-muted); border: 0.5px solid #333;
-    padding: 4px 10px; border-radius: 20px; letter-spacing: 0.08em; text-transform: uppercase;
-  }
-
-  /* Sim container */
-  #fsim {
-    background: var(--f-bg);
-    border: 0.5px solid var(--f-border);
-    border-radius: 14px;
-    padding: 28px;
-  }
+  .site-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+  .site-logo { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; color: var(--f-lime); }
+  .site-tag { font-size: 11px; color: var(--f-muted); border: 0.5px solid #333; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.08em; text-transform: uppercase; }
+  #fsim { background: var(--f-bg); border: 0.5px solid var(--f-border); border-radius: 14px; padding: 28px; }
   .sim-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
   .sim-sub { font-size: 13px; color: var(--f-muted); margin-bottom: 28px; line-height: 1.6; }
-
-  /* Controls */
-  .f-label {
-    font-size: 11px; color: var(--f-muted);
-    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px;
-  }
+  .f-label { font-size: 11px; color: var(--f-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
   input[type=range] { accent-color: var(--f-lime); width: 100%; cursor: pointer; }
   input[type=number], input[type=text], select {
     background: var(--f-surface); color: var(--f-text);
     border: 0.5px solid var(--f-border); border-radius: 6px;
-    padding: 6px 10px; font-size: 13px; outline: none;
-    font-family: inherit;
+    padding: 6px 10px; font-size: 13px; outline: none; font-family: inherit;
   }
-  input[type=number]:focus, input[type=text]:focus, select:focus {
-    border-color: #555;
-  }
+  input[type=number]:focus, input[type=text]:focus, select:focus { border-color: #555; }
   input[type=text] { width: 120px; }
   select { cursor: pointer; }
-
-  /* Buttons */
   button {
-    background: transparent; color: var(--f-muted);
-    border: 0.5px solid var(--f-border); border-radius: 6px;
-    padding: 5px 12px; font-size: 12px; cursor: pointer;
+    background: transparent; color: var(--f-muted); border: 0.5px solid var(--f-border);
+    border-radius: 6px; padding: 5px 12px; font-size: 12px; cursor: pointer;
     font-family: inherit; transition: color 0.15s, border-color 0.15s;
   }
   button:hover { color: var(--f-text); border-color: #555; }
@@ -82,8 +53,6 @@
   }
   button#addBtn:hover { background: #d4ff1a; }
   button#addBtn:disabled { background: #2a2a2a; color: #444; cursor: not-allowed; }
-
-  /* Rows */
   .f-row {
     display: flex; align-items: center; gap: 10px;
     background: var(--f-surface); border: 0.5px solid var(--f-border);
@@ -97,8 +66,6 @@
   .f-name { font-size: 13px; font-weight: 500; }
   .f-sub-text { font-size: 11px; color: var(--f-muted); }
   .f-count { font-size: 12px; font-family: monospace; color: var(--f-muted); margin-left: auto; flex-shrink: 0; }
-
-  /* Stat cards */
   .f-stat {
     display: flex; align-items: center; gap: 12px;
     background: var(--f-surface); border: 0.5px solid var(--f-border);
@@ -106,46 +73,35 @@
   }
   .f-bar-wrap { flex: 1; height: 4px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
   .f-bar { height: 100%; border-radius: 2px; transition: width 0.35s; }
-
-  /* Ticket grid */
-  .tk {
-    width: 13px; height: 13px; border-radius: 2px;
-    display: inline-block; cursor: pointer;
-    transition: transform 0.1s; flex-shrink: 0;
-  }
+  .tk { width: 13px; height: 13px; border-radius: 2px; display: inline-block; cursor: pointer; transition: transform 0.1s; flex-shrink: 0; }
   .tk:hover { transform: scale(1.8); z-index: 10; position: relative; }
-
-  /* Summary box */
-  .f-summary {
-    background: var(--f-surface); border: 0.5px solid var(--f-border);
-    border-radius: 8px; padding: 14px 16px;
-  }
-  .f-summary-row {
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .f-summary-row + .f-summary-row { margin-top: 8px; }
-
-  /* Detail */
-  #ticketDetail {
-    background: var(--f-surface); border: 0.5px solid #444;
-    border-radius: 8px; padding: 10px 14px;
-    font-size: 13px; margin-top: 10px; display: none;
-  }
-
-  /* Legend */
-  .legend-wrap {
-    display: flex; flex-wrap: wrap; gap: 14px;
-    margin-top: 10px; font-size: 12px; color: var(--f-muted);
-  }
+  .f-summary { background: var(--f-surface); border: 0.5px solid var(--f-border); border-radius: 8px; padding: 14px 16px; }
+  .f-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+  .f-divider { border: none; border-top: 0.5px solid var(--f-border); margin: 8px 0; }
+  #ticketDetail { background: var(--f-surface); border: 0.5px solid #444; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-top: 10px; display: none; }
+  .legend-wrap { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; font-size: 12px; color: var(--f-muted); }
   .legend-item { display: flex; align-items: center; gap: 5px; }
   .legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
-
-  /* Section divider */
   .f-section { margin: 28px 0 10px; }
-  .f-section-head {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 10px;
+  .f-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .scenario-wrap {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    background: var(--f-surface); border: 0.5px solid var(--f-border);
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 24px;
   }
+  .scenario-btn {
+    flex: 1; min-width: 150px; padding: 9px 12px;
+    background: transparent; border: 0.5px solid var(--f-border);
+    border-radius: 7px; cursor: pointer; font-family: inherit;
+    text-align: left; transition: all 0.15s; color: var(--f-text);
+  }
+  .scenario-btn:hover { border-color: #555; }
+  .scenario-btn.active { background: rgba(200,255,0,0.07); border-color: var(--f-lime); }
+  .scenario-btn .s-title { font-size: 13px; font-weight: 500; color: var(--f-text); display: flex; align-items: center; gap: 7px; }
+  .scenario-btn .s-desc { font-size: 11px; color: var(--f-muted); margin-top: 3px; line-height: 1.4; }
+  .scenario-btn.active .s-title { color: var(--f-lime); }
+  .s-dot { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #555; flex-shrink: 0; }
+  .scenario-btn.active .s-dot { background: var(--f-lime); border-color: var(--f-lime); }
 </style>
 </head>
 <body>
@@ -160,8 +116,7 @@
     <div class="sim-title">Prime routing simulator</div>
     <div class="sim-sub">Each ticket's sequence number is evaluated against every layer's prime via modulo. Collisions resolve by rotating back-off: the last collision winner yields to the next eligible party.</div>
 
-    <!-- Controls -->
-    <div style="display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; margin-bottom:28px;">
+    <div style="display:flex; gap:28px; align-items:flex-end; flex-wrap:wrap; margin-bottom:24px;">
       <div style="flex:2; min-width:200px;">
         <div class="f-label">Tickets in raffle</div>
         <div style="display:flex; align-items:center; gap:12px;">
@@ -175,36 +130,48 @@
       </div>
     </div>
 
-    <!-- Layers header -->
+    <!-- Scenario toggle -->
+    <div class="f-label">Payout scenario</div>
+    <div class="scenario-wrap">
+      <button class="scenario-btn" data-scenario="1" onclick="setScenario(1)">
+        <div class="s-title"><span class="s-dot"></span>Pay 50% to beneficiary</div>
+        <div class="s-desc">Jackpot = 50% of layer-routed fees only. Beneficiary keeps their full collected share.</div>
+      </button>
+      <button class="scenario-btn active" data-scenario="2" onclick="setScenario(2)">
+        <div class="s-title"><span class="s-dot"></span>Pay 50% to winner</div>
+        <div class="s-desc">Classic 50/50. Beneficiary collects all unmatched tickets, then pays 50% of total pot to winner.</div>
+      </button>
+      <button class="scenario-btn" data-scenario="3" onclick="setScenario(3)">
+        <div class="s-title"><span class="s-dot"></span>Split pot after fees</div>
+        <div class="s-desc">Layers take their cut first. Remaining pot splits evenly between winner and beneficiary.</div>
+      </button>
+    </div>
+
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
       <div class="f-label" style="margin-bottom:0;">Routing layers</div>
       <button id="addBtn" onclick="addLayer()">+ add layer</button>
     </div>
 
-    <!-- Fixed: Raffle Winner -->
     <div class="f-row">
       <div class="f-badge" style="background:#1e2a00; color:#c8ff00;">W</div>
       <div>
         <div class="f-name">Raffle winner</div>
-        <div class="f-sub-text">50% of total revenue — paid out after draw</div>
+        <div class="f-sub-text" id="winner-sub">50% of total revenue &mdash; paid out after draw</div>
       </div>
       <div id="winner-rev" class="f-count" style="color:#c8ff00;"></div>
     </div>
 
-    <!-- Fixed: Beneficiary -->
     <div class="f-row">
       <div class="f-badge" style="background:#222; color:#666;">B</div>
       <div>
         <div class="f-name">Beneficiary</div>
-        <div class="f-sub-text">Default — receives all unmatched tickets</div>
+        <div class="f-sub-text">Default &mdash; receives all unmatched tickets</div>
       </div>
       <div id="beneficiary-count" class="f-count"></div>
     </div>
 
-    <!-- Dynamic layers -->
     <div id="layerList"></div>
 
-    <!-- Allocation -->
     <div class="f-section">
       <div class="f-section-head">
         <div class="f-label" style="margin-bottom:0;">Allocation by recipient</div>
@@ -217,13 +184,23 @@
           <span id="totalRev" style="font-size:14px; font-weight:600; font-family:monospace;"></span>
         </div>
         <div class="f-summary-row">
-          <span style="font-size:12px; color:var(--f-muted);">Winner jackpot (50%)</span>
+          <span style="font-size:12px; color:var(--f-muted);">Layer fees total</span>
+          <span id="layerFees" style="font-size:13px; font-family:monospace; color:var(--f-muted);"></span>
+        </div>
+        <hr class="f-divider">
+        <div class="f-summary-row">
+          <span style="font-size:12px; color:var(--f-muted);">Winner jackpot</span>
           <span id="jackpot" style="font-size:14px; font-weight:600; font-family:monospace; color:#c8ff00;"></span>
         </div>
+        <div class="f-summary-row">
+          <span style="font-size:12px; color:var(--f-muted);">Beneficiary net</span>
+          <span id="benefNet" style="font-size:14px; font-weight:600; font-family:monospace;"></span>
+        </div>
+        <hr class="f-divider">
+        <div id="scenarioNote" style="font-size:11px; color:var(--f-muted); line-height:1.5;"></div>
       </div>
     </div>
 
-    <!-- Ticket grid -->
     <div class="f-section">
       <div class="f-label">Ticket routing map</div>
       <div id="ticketGrid" style="display:flex; flex-wrap:wrap; gap:3px; padding:16px; background:var(--f-surface); border:0.5px solid var(--f-border); border-radius:8px; min-height:48px;"></div>
@@ -240,19 +217,27 @@
 
 <script>
 const LAYER_COLORS = [
-  { mid:'#c8ff00', bg:'#1e2a00', text:'#c8ff00', name:'lime' },
-  { mid:'#fb923c', bg:'#2a1400', text:'#fb923c', name:'orange' },
-  { mid:'#a78bfa', bg:'#1a1030', text:'#a78bfa', name:'purple' },
-  { mid:'#f472b6', bg:'#2a0a1a', text:'#f472b6', name:'pink' },
-  { mid:'#38bdf8', bg:'#0a1e2a', text:'#38bdf8', name:'blue' },
-  { mid:'#34d399', bg:'#001a10', text:'#34d399', name:'green' },
+  { mid:'#c8ff00', bg:'#1e2a00', text:'#c8ff00' },
+  { mid:'#fb923c', bg:'#2a1400', text:'#fb923c' },
+  { mid:'#a78bfa', bg:'#1a1030', text:'#a78bfa' },
+  { mid:'#f472b6', bg:'#2a0a1a', text:'#f472b6' },
+  { mid:'#38bdf8', bg:'#0a1e2a', text:'#38bdf8' },
+  { mid:'#34d399', bg:'#001a10', text:'#34d399' },
 ];
-
 const BENEF_MID = '#555';
 const ALL_PRIMES = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47];
 
 let layers = [{ id:'l0', name:'Platform', prime:11, colorIdx:0 }];
 let nextId = 1, nextColorIdx = 1;
+let scenario = 2;
+
+function setScenario(s) {
+  scenario = s;
+  document.querySelectorAll('.scenario-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.scenario) === s);
+  });
+  render();
+}
 
 function usedPrimes() { return new Set(layers.map(l => l.prime)); }
 function getAvailPrimes() { const u = usedPrimes(); return ALL_PRIMES.filter(p => !u.has(p)); }
@@ -285,27 +270,55 @@ function computeRouting(n, layerList) {
   return { results, received };
 }
 
-function fmt(n) { return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmt(n) { return '$' + Math.max(0,n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+
+function calcPayouts(numTickets, ticketPrice, received) {
+  const total = numTickets * ticketPrice;
+  const layerTickets = layers.reduce((sum, l) => sum + (received[l.id] || 0), 0);
+  const layerRevenue = layerTickets * ticketPrice;
+  const benefGross = (received['beneficiary'] || 0) * ticketPrice;
+  let jackpot, benefNet, note, winnerSub;
+
+  if (scenario === 1) {
+    jackpot = layerRevenue * 0.5;
+    benefNet = benefGross;
+    note = 'Jackpot is 50% of layer-routed revenue (' + fmt(layerRevenue) + '). Beneficiary keeps their full ' + fmt(benefGross) + ' collected share.';
+    winnerSub = '50% of layer-routed revenue \u2014 paid out after draw';
+  } else if (scenario === 2) {
+    jackpot = total * 0.5;
+    benefNet = benefGross - jackpot;
+    note = 'Classic 50/50: beneficiary collected ' + fmt(benefGross) + ' then pays 50% of the full ' + fmt(total) + ' pot to the winner.';
+    winnerSub = '50% of total revenue \u2014 paid out after draw';
+  } else {
+    const remainder = total - layerRevenue;
+    jackpot = remainder * 0.5;
+    benefNet = remainder * 0.5;
+    note = 'Layers collected ' + fmt(layerRevenue) + ' in fees. The remaining ' + fmt(remainder) + ' splits 50/50: ' + fmt(jackpot) + ' to winner, ' + fmt(benefNet) + ' to beneficiary.';
+    winnerSub = '50% of pot after layer fees \u2014 paid out after draw';
+  }
+  return { jackpot, benefNet, layerRevenue, total, note, winnerSub };
+}
 
 function render() {
   const numTickets = parseInt(document.getElementById('tcSlider').value);
   const ticketPrice = parseFloat(document.getElementById('priceInput').value) || 5;
-  const total = numTickets * ticketPrice;
-  const jackpotAmt = total * 0.5;
-
   const { results, received } = computeRouting(numTickets, layers);
   const collisions = results.filter(r => r.isCollision).length;
+  const { jackpot, benefNet, layerRevenue, total, note, winnerSub } = calcPayouts(numTickets, ticketPrice, received);
 
   document.getElementById('collNote').textContent = collisions + ' collision' + (collisions !== 1 ? 's' : '');
   document.getElementById('totalRev').textContent = fmt(total);
-  document.getElementById('jackpot').textContent = fmt(jackpotAmt);
-  document.getElementById('winner-rev').textContent = fmt(jackpotAmt);
-  document.getElementById('beneficiary-count').textContent = received['beneficiary'] + ' tickets';
+  document.getElementById('jackpot').textContent = fmt(jackpot);
+  document.getElementById('benefNet').textContent = fmt(benefNet);
+  document.getElementById('layerFees').textContent = fmt(layerRevenue);
+  document.getElementById('scenarioNote').textContent = note;
+  document.getElementById('winner-rev').textContent = fmt(jackpot);
+  document.getElementById('winner-sub').textContent = winnerSub;
+  document.getElementById('beneficiary-count').textContent = (received['beneficiary'] || 0) + ' tickets';
 
   const colorMap = {};
   layers.forEach(l => { colorMap[l.id] = LAYER_COLORS[l.colorIdx]; });
 
-  // Ticket grid
   const grid = document.getElementById('ticketGrid');
   grid.innerHTML = '';
   results.forEach(r => {
@@ -314,7 +327,6 @@ function render() {
     const c = r.recipientId === 'beneficiary' ? BENEF_MID : (colorMap[r.recipientId]?.mid || BENEF_MID);
     sq.style.background = c;
     if (r.isCollision) { sq.style.outline = '1.5px solid #fff'; sq.style.outlineOffset = '-1.5px'; }
-    sq.title = 'Ticket #' + r.n + (r.isCollision ? ' — collision' : '');
     sq.addEventListener('click', () => {
       const layer = r.recipientId === 'beneficiary' ? null : layers.find(l => l.id === r.recipientId);
       const name = layer ? layer.name : 'Beneficiary';
@@ -325,14 +337,13 @@ function render() {
         + ' <span style="color:' + c + '; font-weight:500;">' + name + '</span>';
       if (r.isCollision) {
         const parties = r.collisionIds.map(id => layers.find(l => l.id === id)?.name || id).join(', ');
-        txt += ' <span style="color:var(--f-muted); font-size:11px;">&nbsp;&mdash; collision between ' + parties + '; back-off resolver applied</span>';
+        txt += ' <span style="color:var(--f-muted); font-size:11px;">&nbsp;\u2014 collision between ' + parties + '; back-off resolver applied</span>';
       }
       detail.innerHTML = txt;
     });
     grid.appendChild(sq);
   });
 
-  // Legend
   const legend = document.getElementById('legend');
   legend.innerHTML = '';
   const bef = document.createElement('span');
@@ -351,12 +362,11 @@ function render() {
   cEl.innerHTML = '<span class="legend-swatch" style="background:#333; outline:1.5px solid #fff;"></span>collision';
   legend.appendChild(cEl);
 
-  // Stat cards
   const statCards = document.getElementById('statCards');
   statCards.innerHTML = '';
   const allParties = [
-    { id: 'beneficiary', name: 'Beneficiary', prime: null, color: null },
-    ...layers.map(l => ({ id: l.id, name: l.name, prime: l.prime, color: LAYER_COLORS[l.colorIdx] }))
+    { id:'beneficiary', name:'Beneficiary', prime:null, color:null },
+    ...layers.map(l => ({ id:l.id, name:l.name, prime:l.prime, color:LAYER_COLORS[l.colorIdx] }))
   ];
   allParties.forEach(p => {
     const tickets = received[p.id] || 0;
@@ -395,7 +405,7 @@ function renderLayerList() {
     const row = document.createElement('div');
     row.className = 'f-row';
     const primeOpts = [l.prime, ...avail].sort((a, b) => a - b).map(p =>
-      '<option value="' + p + '"' + (p === l.prime ? ' selected' : '') + '>p' + p + ' (~' + (100 / p).toFixed(1) + '%)</option>'
+      '<option value="' + p + '"' + (p === l.prime ? ' selected' : '') + '>p' + p + ' (~' + (100/p).toFixed(1) + '%)</option>'
     ).join('');
     row.innerHTML =
       '<div class="f-badge" style="background:' + c.bg + '; color:' + c.mid + ';">' + l.prime + '</div>' +
@@ -412,12 +422,7 @@ function renderLayerList() {
 function addLayer() {
   const avail = getAvailPrimes();
   if (avail.length === 0 || layers.length >= 6) return;
-  layers.push({
-    id: 'l' + nextId++,
-    name: 'Layer ' + layers.length,
-    prime: avail[0],
-    colorIdx: nextColorIdx % LAYER_COLORS.length
-  });
+  layers.push({ id:'l'+nextId++, name:'Layer '+layers.length, prime:avail[0], colorIdx:nextColorIdx % LAYER_COLORS.length });
   nextColorIdx++;
   render();
 }
@@ -425,13 +430,12 @@ function removeLayer(id) { layers = layers.filter(l => l.id !== id); render(); }
 function updateName(id, val) { const l = layers.find(l => l.id === id); if (l) { l.name = val; render(); } }
 function updatePrime(id, val) { const l = layers.find(l => l.id === id); if (l) { l.prime = val; render(); } }
 
-document.getElementById('tcSlider').addEventListener('input', function () {
+document.getElementById('tcSlider').addEventListener('input', function() {
   document.getElementById('tcVal').textContent = this.value;
   document.getElementById('ticketDetail').style.display = 'none';
   render();
 });
 document.getElementById('priceInput').addEventListener('input', render);
-
 render();
 </script>
 </body>
