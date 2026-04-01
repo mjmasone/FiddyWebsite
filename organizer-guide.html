@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Fiddyfiddy — Organizer Guide</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Fiddyfiddy — Organizer Guide</h1>
+</header>
+<h1 id="fiddyfiddy-organizer-guide">Fiddyfiddy — Organizer Guide</h1>
+<p>How to set up, run, and close a raffle on Fiddyfiddy.</p>
+<p><a href="index.html">Back to Home</a></p>
+<hr />
+<h2 id="log-in">1. Log in</h2>
+<p>Go to your Fiddyfiddy site and navigate to <code>/login</code>. Enter
+the email and password you registered with. You’ll land on your
+<strong>Dashboard</strong> — this is home base for all your raffles.</p>
+<hr />
+<h2 id="create-a-raffle">2. Create a raffle</h2>
+<p>From the Dashboard, click <strong>Create New Raffle</strong>.</p>
+<h3 id="fill-in-the-basics">Fill in the basics</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr>
+<th>Field</th>
+<th>What to enter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raffle Name</td>
+<td>Something recognizable — “Spring Game Day 50/50”, “Booster Club
+Raffle”</td>
+</tr>
+<tr>
+<td>Raffle Date</td>
+<td>The date of the event or drawing</td>
+</tr>
+<tr>
+<td>Beneficiary Name</td>
+<td>Who the money goes to — “Tigers Baseball”, “PTA Fund”</td>
+</tr>
+<tr>
+<td>Beneficiary Type</td>
+<td>Team, Charity, School, Church, etc.</td>
+</tr>
+<tr>
+<td>Beneficiary Venmo</td>
+<td>The Venmo handle where the beneficiary’s share will be
+collected</td>
+</tr>
+<tr>
+<td>Ticket Price</td>
+<td>$10–$30 recommended. The system auto-calculates max tickets to keep
+the jackpot under $600</td>
+</tr>
+<tr>
+<td>Ticket Prefix</td>
+<td>Auto-generated from the raffle name + date. You can edit it</td>
+</tr>
+</tbody>
+</table>
+<h3 id="choose-a-draw-trigger">Choose a draw trigger</h3>
+<ul>
+<li><strong>Manual</strong> — You decide when to draw. Best for live
+events.</li>
+<li><strong>Scheduled time</strong> — Set a date/time and draw
+then.</li>
+<li><strong>Ticket count</strong> — Automatically triggers when X
+tickets are sold.</li>
+</ul>
+<h3 id="pick-your-payout-scenario">Pick your payout scenario</h3>
+<ul>
+<li><strong>Jackpot is 50% of ticket sales</strong> (default) —
+Straightforward. Half the pot goes to the winner.</li>
+<li><strong>Jackpot is 50% of ticket sales - fees</strong> — Layer fees
+come off the top first, then the winner gets half of what’s left.</li>
+</ul>
+<h3 id="add-routing-layers-optional">Add routing layers (optional)</h3>
+<p>The Platform layer is already set and locked — you don’t need to
+touch it. If you have sponsors or partners who should receive a cut of
+ticket sales, click <strong>+ Add Layer</strong> and fill in:</p>
+<ul>
+<li><strong>Name</strong> — “Gold Sponsor”, “Booster Club”, etc.</li>
+<li><strong>Prime</strong> — Pick from the dropdown. Lower primes =
+bigger cut. p7 gets ~14%, p13 gets ~8%.</li>
+<li><strong>Venmo</strong> — The Venmo handle where that layer’s ticket
+payments are sent.</li>
+</ul>
+<p>You can add up to 5 additional layers.</p>
+<h3 id="optional-settings">Optional settings</h3>
+<ul>
+<li><strong>Logo URL</strong> — Paste a direct image link. Shows on the
+raffle page and flyer. To get a direct image link from Imgur:
+<ol type="1">
+<li>Go to <a href="https://imgur.com">imgur.com</a> and click
+<strong>New post</strong></li>
+<li>Upload your image (team logo, event graphic, etc.)</li>
+<li>Once uploaded, right-click the image and select <strong>Copy image
+address</strong></li>
+<li>The URL should end in <code>.png</code> or <code>.jpg</code> — paste
+that into the Logo URL field</li>
+<li>If it doesn’t end in an image extension, add <code>.png</code> to
+the end of the Imgur URL</li>
+</ol></li>
+<li><strong>Theme Color</strong> — Pick a color that matches the
+team/cause.</li>
+<li><strong>Visibility</strong> — Uncheck “Show in public lobby” if you
+only want to share the raffle via direct link.</li>
+</ul>
+<p>Click <strong>Create Raffle</strong>. You’ll land on the Edit
+page.</p>
+<hr />
+<h2 id="review-and-activate">3. Review and activate</h2>
+<p>The Edit page shows everything about your raffle. Review the details,
+then:</p>
+<ol type="1">
+<li><strong>Save Appearance</strong> if you changed logo/color</li>
+<li><strong>Save Layers</strong> if you added sponsor layers</li>
+<li>Click <strong>Activate Raffle</strong></li>
+</ol>
+<p>Once activated, the raffle is live and accepting tickets.</p>
+<hr />
+<h2 id="share-the-raffle">4. Share the raffle</h2>
+<p>After activation, the Edit page shows:</p>
+<ul>
+<li><strong>QR Code</strong> — Print it, put it on tables, project it on
+a screen</li>
+<li><strong>Player Link</strong> — Copy and share via text, email, or
+social media</li>
+<li><strong>Flyer</strong> — Go to the Flyer page for a printable
+version with the QR code</li>
+<li><strong>Text / Email</strong> — Use the built-in share buttons to
+send the link directly</li>
+</ul>
+<h3 id="get-the-word-out">Get the word out</h3>
+<p>The more people see it, the bigger the pot. Share the raffle link
+everywhere:</p>
+<ul>
+<li><strong>Text messages</strong> — Send to your contacts, parent
+groups, team group chats</li>
+<li><strong>Facebook</strong> — Post the link on your page, in community
+groups, and event pages</li>
+<li><strong>Instagram</strong> — Add the link to your story or bio</li>
+<li><strong>Nextdoor</strong> — Great for local fundraisers</li>
+<li><strong>Email</strong> — Send to your mailing list, booster club
+members, or school newsletter</li>
+<li><strong>At the event</strong> — Display the QR code on screens,
+print the flyer, hand it out at the door</li>
+</ul>
+<p>Players scan the QR code or click the link, fill out their info, and
+pay via Venmo.</p>
+<hr />
+<h2 id="during-the-raffle">5. During the raffle</h2>
+<h3 id="monitor-from-the-dashboard">Monitor from the Dashboard</h3>
+<p>Your Dashboard shows each raffle with tickets sold and current
+status.</p>
+<h3 id="verify-tickets-if-needed">Verify tickets (if needed)</h3>
+<p>Go to <strong>Edit &gt; Verify Tickets</strong> to see pending
+tickets. By default, tickets are auto-verified — you only need to check
+the winner’s payment at draw time.</p>
+<hr />
+<h2 id="run-the-drawing">6. Run the drawing</h2>
+<p>When you’re ready to draw:</p>
+<ol type="1">
+<li>Go to <strong>Edit &gt; Go to Drawing</strong></li>
+<li>Click <strong>Draw</strong> — the system randomly selects a
+ticket</li>
+<li><strong>Verify the winner’s payment</strong> — confirm they actually
+paid via Venmo</li>
+<li>If payment checks out: <strong>Confirm Winner</strong></li>
+<li>If payment can’t be verified: <strong>Redraw</strong> (up to 3
+redraws allowed)</li>
+</ol>
+<p>The winner and all players are notified by email.</p>
+<hr />
+<h2 id="pay-the-winner">7. Pay the winner</h2>
+<p>After confirming a winner, you’ll be taken to the
+<strong>Payout</strong> page.</p>
+<ol type="1">
+<li>The jackpot amount and winner’s Venmo are displayed</li>
+<li>Click <strong>Pay Winner via Venmo</strong> — this opens Venmo with
+the amount pre-filled</li>
+<li>Complete the payment in Venmo</li>
+<li>Come back and click <strong>Confirm Payment Sent</strong></li>
+</ol>
+<p>You have <strong>48 hours</strong> to complete the payout.</p>
+<hr />
+<h2 id="view-the-report">8. View the report</h2>
+<p>After payout, a full report is available showing:</p>
+<ul>
+<li>Total revenue, jackpot, and beneficiary net</li>
+<li>Layer breakdown (who got what)</li>
+<li>Winner details</li>
+<li>Drawing log (including any redraws)</li>
+<li>Complete ticket list</li>
+</ul>
+<p>You can print this from the report page.</p>
+<hr />
+<h2 id="quick-reference">Quick reference</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create a raffle</td>
+<td>Dashboard &gt; Create New Raffle</td>
+</tr>
+<tr>
+<td>Edit/activate</td>
+<td>Dashboard &gt; click raffle &gt; Edit</td>
+</tr>
+<tr>
+<td>Share QR code</td>
+<td>Edit page &gt; Share section</td>
+</tr>
+<tr>
+<td>Print flyer</td>
+<td>Edit page &gt; Flyer link</td>
+</tr>
+<tr>
+<td>Verify tickets</td>
+<td>Edit page &gt; Verify Tickets</td>
+</tr>
+<tr>
+<td>Run drawing</td>
+<td>Edit page &gt; Go to Drawing</td>
+</tr>
+<tr>
+<td>Pay winner</td>
+<td>Drawing &gt; Confirm &gt; Payout page</td>
+</tr>
+<tr>
+<td>View report</td>
+<td>Payout &gt; View Report</td>
+</tr>
+<tr>
+<td>Cancel a raffle</td>
+<td>Edit page &gt; Cancel Raffle (Active only)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="other">Other</h2>
+<h3 id="what-if-my-raffle-sells-out">What if my raffle sells out?</h3>
+<p>Good problem to have. Just create a new raffle from the Dashboard.
+Use a different ticket prefix (e.g., add “R2” to the name) so players
+can tell the raffles apart. You can run multiple raffles at the same
+time.</p>
+<h3 id="what-if-the-drawn-ticket-is-unverified">What if the drawn ticket
+is unverified?</h3>
+<p>If the winner’s Venmo payment can’t be confirmed:</p>
+<ol type="1">
+<li>Click <strong>Redraw</strong> on the drawing page</li>
+<li>Enter a reason (e.g., “Payment not confirmed”)</li>
+<li>The system draws another ticket</li>
+<li>You get up to <strong>3 redraws</strong> total</li>
+<li>If all 3 redraws are exhausted, the system flags the raffle for
+owner review</li>
+</ol>
+<p>The original unverified ticket is marked as Invalid and that player
+is notified.</p>
+<hr />
+<h2 id="tips">Tips</h2>
+<ul>
+<li><strong>Price tickets at $10, $20, or $30.</strong> Higher prices
+mean a bigger jackpot with fewer tickets to manage. A $20 ticket with 60
+buyers is a $600 jackpot — that gets people excited.</li>
+<li><strong>People love betting for cash for a good cause.</strong>
+Don’t be shy with the sharing. Post it everywhere, text it to everyone,
+and bring it up in conversation. The more buzz, the bigger the pot.</li>
+<li><strong>Use the QR code</strong> — it’s the fastest way to get
+tickets sold at a live event.</li>
+<li><strong>Keep it public</strong> unless you have a reason not to.
+Public raffles show up in the lobby and get more traffic.</li>
+<li><strong>Don’t wait too long to draw</strong> — players lose
+interest. If it’s a live event, draw before people leave.</li>
+<li><strong>The $600 cap is automatic</strong> — you don’t need to worry
+about it. The system won’t let you sell more tickets than the limit
+allows.</li>
+</ul>
+<hr />
+<p>Fiddyfiddy — Digital 50/50 Raffle Platform — <a
+href="https://fiddyfiddy.org">fiddyfiddy.org</a></p>
+<p><a href="index.html">Back to Home</a></p>
+</body>
+</html>
