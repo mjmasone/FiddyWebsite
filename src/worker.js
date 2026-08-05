@@ -28,6 +28,13 @@ export default {
     if (path === '/unsubscribe') return handleUnsubscribe(request, env, url);
     if (path === '/api/suppressions') return handleSuppressions(request, env);
 
+    // assets.html_handling is "none" so that /organizer-guide.html keeps
+    // serving at that exact path instead of redirecting. That also turns off
+    // the edge's automatic "/" -> index.html mapping, so do it here.
+    if (path === '/') {
+      return env.ASSETS.fetch(new Request(new URL('/index.html', url), request));
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
