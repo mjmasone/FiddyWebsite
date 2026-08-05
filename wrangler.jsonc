@@ -1,0 +1,36 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+
+  // Matches the existing deployment at fiddywebsite.mjmasone.workers.dev,
+  // which fiddyfiddy.org is routed to.
+  "name": "fiddywebsite",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-04",
+
+  // Files in public/ are served straight from the edge. Anything that doesn't
+  // match a file (/unsubscribe, /api/suppressions) invokes the Worker.
+  // html_handling "none" keeps the existing .html URLs intact. The default
+  // would 307 /organizer-guide.html to /organizer-guide, and every nav link
+  // on the site points at the .html path.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "none"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "SUPPRESSIONS_DB",
+      "database_name": "fiddy-suppressions",
+      // Replace with the id printed by: npx wrangler d1 create fiddy-suppressions
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+    }
+  ],
+
+  // SUPPRESSIONS_API_TOKEN is a secret, not a var. Set it with:
+  //   npx wrangler secret put SUPPRESSIONS_API_TOKEN
+
+  "observability": {
+    "enabled": true
+  }
+}

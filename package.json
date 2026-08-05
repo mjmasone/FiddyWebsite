@@ -1,0 +1,15 @@
+{
+  "name": "fiddywebsite",
+  "version": "1.0.0",
+  "description": "fiddyfiddy.org marketing site and unsubscribe endpoint",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute fiddy-suppressions --remote --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute fiddy-suppressions --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
+  }
+}

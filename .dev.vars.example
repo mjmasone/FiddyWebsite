@@ -1,0 +1,3 @@
+# Copy to .dev.vars for `wrangler dev`. Never commit .dev.vars.
+# Production uses: npx wrangler secret put SUPPRESSIONS_API_TOKEN
+SUPPRESSIONS_API_TOKEN=local-dev-token
