@@ -22,8 +22,7 @@
     {
       "binding": "SUPPRESSIONS_DB",
       "database_name": "fiddy-suppressions",
-      // Replace with the id printed by: npx wrangler d1 create fiddy-suppressions
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID"
+      "database_id": "93229624-246c-4eb2-9690-d32e93da611f"
     }
   ],
 
